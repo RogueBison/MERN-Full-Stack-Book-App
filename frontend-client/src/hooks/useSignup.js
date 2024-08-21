@@ -1,6 +1,7 @@
 import { useState } from "react";
 import { useAuthContext } from "./useAuthContext";
 import { useNavigate } from "react-router-dom";
+const url = import.meta.env.VITE_SERVER_URL;
 
 export const useSignup = () => {
   const navigate = useNavigate();
@@ -13,7 +14,7 @@ export const useSignup = () => {
     setError(null);
 
     try {
-      const response = await fetch("http://localhost:5000/user/signup", {
+      const response = await fetch(`${url}/user/signup`, {
         method: "POST",
         headers: { "Content-type": "application/json" },
         body: JSON.stringify({ username, email, password }),

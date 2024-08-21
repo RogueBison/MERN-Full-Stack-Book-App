@@ -3,6 +3,7 @@ import { useEffect, useState } from "react";
 import { PiBasketFill } from "react-icons/pi";
 import { IconContext } from "react-icons";
 import StarRating from "../components/starRating";
+const url = import.meta.env.VITE_SERVER_URL;
 
 export default function Home() {
   const [monthlyBook, setMonthlyBook] = useState();
@@ -13,7 +14,7 @@ export default function Home() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await fetch("http://localhost:5000/books/");
+        const response = await fetch(`${url}/books/`);
         if (!response.ok) {
           throw new Error(`Response status: ${response.status}`);
         }
@@ -41,8 +42,8 @@ export default function Home() {
         {monthlyBook ? (
           <div className="bg-red-400 inherit w-full px-28 py-12 rounded-lg flex mt-4 gap-8 text-neutral-100">
             <img
-              src={`http://localhost:5000/uploads/${monthlyBook.path}`}
-              id="botm-image"
+              src={`${url}/uploads/${monthlyBook.path}`}
+              id="botm-cover"
               className="rounded-sm w-44"
             />
 
@@ -107,8 +108,8 @@ export default function Home() {
               >
                 <div className="max-w-48">
                   <img
-                    src={`http://localhost:5000/uploads/${dealBook.path}`}
-                    id="botm-image"
+                    src={`${url}/uploads/${dealBook.path}`}
+                    id="deal-cover"
                     className="rounded-sm"
                   />
                 </div>
@@ -170,8 +171,8 @@ export default function Home() {
               >
                 <div className="max-w-48">
                   <img
-                    src={`http://localhost:5000/uploads/${highRatingBook.path}`}
-                    id="botm-image"
+                    src={`${url}/uploads/${highRatingBook.path}`}
+                    id="high-rating-cover"
                     className="rounded-sm"
                   />
                 </div>
@@ -233,8 +234,8 @@ export default function Home() {
               >
                 <div className="max-w-48">
                   <img
-                    src={`http://localhost:5000/uploads/${newestBook.path}`}
-                    id="botm-image"
+                    src={`${url}/uploads/${newestBook.path}`}
+                    id="newest-cover"
                     className="rounded-sm"
                   />
                 </div>

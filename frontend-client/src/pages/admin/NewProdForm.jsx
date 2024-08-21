@@ -2,6 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useBooksContext } from "../../hooks/useBooksContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
+const url = import.meta.env.VITE_SERVER_URL;
 
 export default function NewProdForm() {
   const navigate = useNavigate();
@@ -39,7 +40,7 @@ export default function NewProdForm() {
     formData.append("genres", genre);
     formData.append("description", description);
 
-    const response = await fetch("http://localhost:5000/admin/create", {
+    const response = await fetch(`${url}/admin/create`, {
       method: "POST",
       body: formData,
       headers: {

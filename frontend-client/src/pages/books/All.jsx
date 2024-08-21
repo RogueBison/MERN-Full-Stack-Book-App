@@ -5,6 +5,7 @@ import { PiBasketFill } from "react-icons/pi";
 import { IconContext } from "react-icons";
 import StarRating from "../../components/starRating";
 import { useBooksContext } from "../../hooks/useBooksContext";
+const url = import.meta.env.VITE_SERVER_URL;
 
 export default function All() {
   /* const [books, setBooks] = useState(null); */
@@ -13,7 +14,7 @@ export default function All() {
   useEffect(() => {
     const fetchBooks = async () => {
       try {
-        const response = await fetch("http://localhost:5000/books/all");
+        const response = await fetch(`${url}/books/all`);
         if (!response.ok) {
           throw new Error(`Response status: ${response.status}`);
         }
@@ -40,8 +41,8 @@ export default function All() {
             >
               <div>
                 <img
-                  src={`http://localhost:5000/uploads/${book.path}`}
-                  id="botm-image"
+                  src={`${url}/uploads/${book.path}`}
+                  id="cover-image"
                   className="rounded-sm w-44"
                 />
               </div>

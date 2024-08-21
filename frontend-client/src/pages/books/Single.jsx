@@ -4,6 +4,7 @@ import { PiBasketFill } from "react-icons/pi";
 import { IconContext } from "react-icons";
 import { useParams } from "react-router-dom";
 import StarRating from "../../components/starRating";
+const url = import.meta.env.VITE_SERVER_URL;
 
 export default function Single() {
   const [book, setBook] = useState(null);
@@ -12,9 +13,7 @@ export default function Single() {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/books/${params.id}`
-        );
+        const response = await fetch(`${url}/books/${params.id}`);
         if (!response.ok) {
           throw new Error(`Response status: ${response.status}`);
         }
@@ -33,8 +32,8 @@ export default function Single() {
       {book ? (
         <div className="inherit w-full px-24 py-16 rounded-lg flex my-32 gap-12 text-emerald-600 border border-emerald-600 bg-slate-200">
           <img
-            src={`http://localhost:5000/uploads/${book.path}`}
-            id="botm-image"
+            src={`${url}/uploads/${book.path}`}
+            id="cover-image"
             className="rounded-sm w-64"
           />
 

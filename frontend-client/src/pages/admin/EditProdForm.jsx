@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useBooksContext } from "../../hooks/useBooksContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
+const url = import.meta.env.VITE_SERVER_URL;
 
 export default function EditProdForm() {
   const params = useParams();
@@ -25,9 +26,7 @@ export default function EditProdForm() {
   useEffect(() => {
     const fetchBook = async () => {
       try {
-        const response = await fetch(
-          `http://localhost:5000/books/${params.id}`
-        );
+        const response = await fetch(`${url}/books/${params.id}`);
         if (!response.ok) {
           throw new Error(`Response status: ${response.status}`);
         }
@@ -70,16 +69,13 @@ export default function EditProdForm() {
     formData.append("description", description);
 
     try {
-      const response = await fetch(
-        `http://localhost:5000/admin/update/${params.id}`,
-        {
-          method: "PUT",
-          body: formData,
-          headers: {
-            Authorization: `Bearer ${user.token}`,
-          },
-        }
-      );
+      const response = await fetch(`${url}/admin/update/${params.id}`, {
+        method: "PUT",
+        body: formData,
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      });
 
       const json = await response.json();
 
@@ -122,16 +118,13 @@ export default function EditProdForm() {
         >
           <div>
             <img
-              src={
-                preview ? preview : `http://localhost:5000/uploads/${book.path}`
-              }
+              src={preview ? preview : `${url}/uploads/${book.path}`}
               className="rounded-sm w-64 mb-4"
             />
             <div className="flex flex-col gap-4">
               <input
                 type="file"
                 name="book_cover"
-                id="book_cover"
                 onChange={handleFileChange}
                 className="uppercase rounded-md py-2 text-base font-semibold bg-emerald-700 text-neutral-200 hover:shadow-lg hover:bg-emerald-800"
                 accept="image/png, image/jpeg"
