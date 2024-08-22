@@ -1,7 +1,7 @@
 {
-  "projects": [
+  "builds": [
     {
-      "src": "frontend-client",
+      "src": "frontend/package.json",
       "use": "@vercel/static-build",
       "config": {
         "distDir": "dist"
