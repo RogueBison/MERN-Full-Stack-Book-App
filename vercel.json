@@ -1,11 +1,8 @@
 {
-  "src": "packages/frontend",
+  "src": "frontend-client/package.json",
   "use": "@vercel/static-build",
   "config": {
     "distDir": "dist"
   },
-  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }],
-  "env": {
-    "REACT_APP_API_URL": "https://your-backend-service.onrender.com"
-  }
+  "rewrites": [{ "source": "/(.*)", "destination": "/index.html" }]
 }
