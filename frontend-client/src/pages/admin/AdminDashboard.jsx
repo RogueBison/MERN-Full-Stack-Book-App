@@ -1,12 +1,12 @@
 import { Link } from "react-router-dom";
-import { useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useBooksContext } from "../../hooks/useBooksContext";
 import { useAuthContext } from "../../hooks/useAuthContext";
 
 export default function AdminDashboard() {
-  /* const [books, setBooks] = useState([]); */
   const { books, dispatch } = useBooksContext();
   const { user } = useAuthContext();
+  const [checkedBooks, setCheckedBooks] = useState([]);
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -16,7 +16,7 @@ export default function AdminDashboard() {
           throw new Error(`Response status: ${response.status}`);
         }
         const json = await response.json();
-        /* setBooks(json); */
+
         dispatch({ type: "GET_BOOKS", payload: json });
       } catch (error) {
         console.error(error.message);
@@ -26,11 +26,21 @@ export default function AdminDashboard() {
     fetchBooks();
   }, [dispatch]);
 
+  const handleCheck = (e) => {
+    const checked = e.target.value;
+
+    setCheckedBooks((prevCheckedBooks) =>
+      e.target.checked
+        ? [...prevCheckedBooks, checked]
+        : prevCheckedBooks.filter((id) => id !== checked)
+    );
+  };
+
   const handleClick = async () => {
-    const selectedBooks = Array.from(
-      document.querySelectorAll('input[name="book-check"]:checked')
-    ).map((checkbox) => checkbox.value);
-    selectedBooks.forEach((bookId) => deleteBook(bookId));
+    checkedBooks.forEach(async (checked) => {
+      await deleteBook(checked);
+      setCheckedBooks([]);
+    });
   };
 
   const deleteBook = async (id) => {
@@ -44,14 +54,12 @@ export default function AdminDashboard() {
           Authorization: `Bearer ${user.token}`,
         },
       });
+
       if (!response.ok) {
         throw new Error(`Response status: ${response.status}`);
       }
-      /* const json = await response.json(); */
 
       dispatch({ type: "DELETE_BOOK", payload: { id } });
-      /* const updatedBooks = books.filter((book) => book._id !== id);
-      setBooks(updatedBooks); */
     } catch (error) {
       console.error(error.message);
     }
@@ -63,7 +71,9 @@ export default function AdminDashboard() {
         <div className="flex justify-between w-full mb-8">
           <div className="flex gap-2">
             <p className="text-lg">Books Selected:</p>
-            <p className="text-emerald-800 font-semibold text-lg">2</p>
+            <p className="text-emerald-800 font-semibold text-lg">
+              {checkedBooks.length}
+            </p>
           </div>
           <div className="flex gap-12">
             <Link
@@ -104,6 +114,7 @@ export default function AdminDashboard() {
                       type="checkbox"
                       id={book._id}
                       name="book-check"
+                      onChange={handleCheck}
                       value={book._id}
                       className="w-6 h-6 bg-neutral-100 rounded-lg"
                     />
