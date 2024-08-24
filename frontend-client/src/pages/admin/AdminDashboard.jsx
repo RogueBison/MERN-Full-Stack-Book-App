@@ -7,6 +7,7 @@ export default function AdminDashboard() {
   const { books, dispatch } = useBooksContext();
   const { user } = useAuthContext();
   const [checkedBooks, setCheckedBooks] = useState([]);
+  const [visibility, setVisibility] = useState("");
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -36,11 +37,19 @@ export default function AdminDashboard() {
     );
   };
 
+  useEffect(() => {
+    if (checkedBooks.length === 0) {
+      setVisibility("invisible");
+    } else {
+      setVisibility("visible");
+    }
+  }, [checkedBooks]);
+
   const handleClick = async () => {
     checkedBooks.forEach(async (checked) => {
       await deleteBook(checked);
-      setCheckedBooks([]);
     });
+    setCheckedBooks([]);
   };
 
   const deleteBook = async (id) => {
@@ -69,9 +78,9 @@ export default function AdminDashboard() {
     <>
       <div className="w-full my-32 text-emerald-700">
         <div className="flex justify-between w-full mb-8">
-          <div className="flex gap-2">
+          <div className={`flex gap-2 ${visibility}`}>
             <p className="text-lg">Books Selected:</p>
-            <p className="text-emerald-800 font-semibold text-lg">
+            <p className="text-emerald-800 font-semibold text-lg h">
               {checkedBooks.length}
             </p>
           </div>
