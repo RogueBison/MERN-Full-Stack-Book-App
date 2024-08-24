@@ -38,11 +38,9 @@ export default function AdminDashboard() {
   };
 
   useEffect(() => {
-    if (checkedBooks.length === 0) {
-      setVisibility("invisible");
-    } else {
-      setVisibility("visible");
-    }
+    checkedBooks.length === 0
+      ? setVisibility("invisible")
+      : setVisibility("visible");
   }, [checkedBooks]);
 
   const handleClick = async () => {
