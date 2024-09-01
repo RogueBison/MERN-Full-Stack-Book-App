@@ -13,7 +13,7 @@ export default function Checkout() {
         </div>
         <div id="product" className="flex py-4 px-6 items-center gap-14">
           <img
-            src="/images/dune.jpg"
+            src="/images/placeholder.jpg"
             id="botm-image"
             className="rounded-sm w-48"
           />
@@ -22,15 +22,13 @@ export default function Checkout() {
               Jurassic Park
             </h3>
             <p className="mt-4">Michael Crichton</p>
-            <p>Horror, Action, Fiction, Fantasy</p>
             <p>31st January 2001</p>
 
             <p className="mt-4">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
-              semper enim sed lorem viverra, nec dignissim dolor lobortis.
-              Praesent tortor ante, ultricies a posuere vel, finibus sit amet
-              eros. Pellentesque quis mi turpis. Morbi id arcu dignissim, semper
-              justo in, imperdiet odio.
+              A cautionary tale about genetic engineering, it presents the
+              collapse of a zoological park showcasing genetically recreated
+              dinosaurs to illustrate the mathematical concept of chaos theory
+              and its real-world implications.
             </p>
           </div>
           <input
@@ -42,24 +40,19 @@ export default function Checkout() {
         </div>
         <div id="product" className="flex py-4 px-6 items-center gap-14">
           <img
-            src="/images/dune.jpg"
+            src="/images/placeholder.jpg"
             id="botm-image"
             className="rounded-sm w-48"
           />
           <div>
-            <h3 className="text-xl font-semibold drop-shadow-sm">
-              Jurassic Park
-            </h3>
+            <h3 className="text-xl font-semibold drop-shadow-sm">Jaws</h3>
             <p className="mt-4">Michael Crichton</p>
-            <p>Horror, Action, Fiction, Fantasy</p>
             <p>31st January 2001</p>
 
             <p className="mt-4">
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit. Phasellus
-              semper enim sed lorem viverra, nec dignissim dolor lobortis.
-              Praesent tortor ante, ultricies a posuere vel, finibus sit amet
-              eros. Pellentesque quis mi turpis. Morbi id arcu dignissim, semper
-              justo in, imperdiet odio.
+              Tells the story of a large great white shark that preys upon a
+              small Long Island resort town and the three men who attempt to
+              kill it.
             </p>
           </div>
           <input

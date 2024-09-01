@@ -1,4 +1,5 @@
 const User = require("../models/userModel");
+const Basket = require("../models/basketModel");
 const jwt = require("jsonwebtoken");
 
 const createToken = (_id) => {
@@ -37,7 +38,57 @@ const loginUserAccount = async (req, res) => {
   }
 };
 
+/// Basket functions
+
+//
+const getBasketAmount = async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    const user = await Basket.findOne({ user: userId });
+    res.status(200).json(user?.basketItems.length);
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+//
+const getUserBasket = async (req, res) => {
+  const { userId } = req.body;
+
+  try {
+    const cart = await Basket.findOne({ user: userId });
+
+    if (!cart) {
+      res.status(404);
+      throw new Error("Basket not found");
+    } else {
+      res.status(200).json(cart);
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+//
+const createUserBasket = async (req, res) => {};
+
+//
+const removeUserBasket = async (req, res) => {};
+
+//
+const increaseQty = async (req, res) => {};
+
+//
+const decreaseQty = async (req, res) => {};
+
 module.exports = {
   createUserAccount,
   loginUserAccount,
+  getBasketAmount,
+  getUserBasket,
+  createUserBasket,
+  removeUserBasket,
+  increaseQty,
+  decreaseQty,
 };
