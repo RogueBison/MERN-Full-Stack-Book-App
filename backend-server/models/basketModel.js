@@ -7,11 +7,12 @@ const basketSchema = new Schema(
     basketItems: [
       {
         book: {
-          path: { type: String },
-          title: { type: String },
-          authors: { type: String },
-          publication: { type: String },
-          description: { type: String },
+          path: { type: String, required: true },
+          title: { type: String, required: true },
+          authors: { type: String, required: true },
+          publication: { type: String, required: true },
+          description: { type: String, required: true },
+          price: { Type: Number, required: true },
         },
         quantity: { type: Number, default: 1 },
       },
