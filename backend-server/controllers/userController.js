@@ -53,7 +53,7 @@ const getBasketAmount = async (req, res) => {
 };
 
 //
-const getUserBasket = async (req, res) => {
+const getBasket = async (req, res) => {
   const { userId } = req;
 
   try {
@@ -71,15 +71,13 @@ const getUserBasket = async (req, res) => {
 };
 
 //
-const createUserBasket = async (req, res) => {
+const addOrUpdateBasket = async (req, res) => {
   const { userId } = req;
   const { id } = req.body.book;
   const cart = await Basket.findOne({ user: userId });
 
   if (cart) {
-    const bookExists = cart.cartItems.findIndex(
-      (item) => item.product.id == id
-    );
+    const bookExists = cart.basketBooks.findIndex((b) => b.product.id == id);
 
     if (bookExists !== -1) {
       await Basket.findOneAndUpdate(
@@ -95,7 +93,7 @@ const createUserBasket = async (req, res) => {
         amount: updatedBook?.basketBooks?.length,
       });
     } else {
-      const addNewBook = await cartModel.findOneAndUpdate(
+      const addNewBook = await Basket.findOneAndUpdate(
         { user: userId },
         { $push: { basketBooks: { book: { ...req.body.book } } } },
         { new: true }
@@ -119,7 +117,7 @@ const createUserBasket = async (req, res) => {
 };
 
 //
-const removeUserBasket = async (req, res) => {};
+const removeBasket = async (req, res) => {};
 
 //
 const increaseQty = async (req, res) => {};
@@ -131,9 +129,9 @@ module.exports = {
   createUserAccount,
   loginUserAccount,
   getBasketAmount,
-  getUserBasket,
-  createUserBasket,
-  removeUserBasket,
+  getBasket,
+  addOrUpdateBasket,
+  removeBasket,
   increaseQty,
   decreaseQty,
 };

@@ -6,9 +6,9 @@ const {
   createUserAccount,
   loginUserAccount,
   getBasketAmount,
-  getUserBasket,
-  createUserBasket,
-  removeUserBasket,
+  getBasket,
+  addOrUpdateBasket,
+  removeBasket,
   increaseQty,
   decreaseQty,
 } = require("../controllers/userController");
@@ -23,9 +23,9 @@ userRouter.post("/login", loginUserAccount);
 
 // Basket Routes
 userRouter.get("/get-basket-number", requireAuth, getBasketAmount);
-userRouter.get("/get-basket", requireAuth, getUserBasket);
-userRouter.post("/create-basket", requireAuth, createUserBasket);
-userRouter.delete("/remove-basket", requireAuth, removeUserBasket);
+userRouter.get("/get-basket", requireAuth, getBasket);
+userRouter.post("/create-basket", requireAuth, addOrUpdateBasket);
+userRouter.delete("/remove-basket", requireAuth, removeBasket);
 userRouter.post("/increase-qty", requireAuth, increaseQty);
 userRouter.post("/decrease-qty", requireAuth, decreaseQty);
 
