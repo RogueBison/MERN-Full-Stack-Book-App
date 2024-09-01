@@ -42,11 +42,11 @@ const loginUserAccount = async (req, res) => {
 
 //
 const getBasketAmount = async (req, res) => {
-  const { userId } = req.body;
+  const { userId } = req;
 
   try {
     const user = await Basket.findOne({ user: userId });
-    res.status(200).json(user?.basketItems.length);
+    res.status(200).json(user?.basketBooks.length);
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
@@ -54,7 +54,7 @@ const getBasketAmount = async (req, res) => {
 
 //
 const getUserBasket = async (req, res) => {
-  const { userId } = req.body;
+  const { userId } = req;
 
   try {
     const cart = await Basket.findOne({ user: userId });
@@ -71,7 +71,52 @@ const getUserBasket = async (req, res) => {
 };
 
 //
-const createUserBasket = async (req, res) => {};
+const createUserBasket = async (req, res) => {
+  const { userId } = req;
+  const { id } = req.body.book;
+  const cart = await Basket.findOne({ user: userId });
+
+  if (cart) {
+    const bookExists = cart.cartItems.findIndex(
+      (item) => item.product.id == id
+    );
+
+    if (bookExists !== -1) {
+      await Basket.findOneAndUpdate(
+        { user: userId, "basketBooks.book.id": id },
+        { $inc: { "basketBooks.$.quantity": 1 } },
+        { new: true }
+      );
+
+      const updatedBook = await Basket.findOne({ user: userId });
+
+      res.status(200).json({
+        message: "Updated Basket",
+        amount: updatedBook?.basketBooks?.length,
+      });
+    } else {
+      const addNewBook = await cartModel.findOneAndUpdate(
+        { user: userId },
+        { $push: { basketBooks: { book: { ...req.body.book } } } },
+        { new: true }
+      );
+
+      res.status(200).json({
+        message: "Added to Basket",
+        total: addNewBook?.basketBooks?.length,
+      });
+    }
+  } else {
+    const book = await Basket.create({
+      user: userId,
+      basketBooks: [{ book: { ...req.body.book } }],
+    });
+    res.status(200).json({
+      message: "Added to Basket",
+      total: book?.basketBooks?.length,
+    });
+  }
+};
 
 //
 const removeUserBasket = async (req, res) => {};

@@ -4,9 +4,10 @@ const Schema = mongoose.Schema;
 
 const basketSchema = new Schema(
   {
-    basketItems: [
+    basketBooks: [
       {
         book: {
+          id: { type: Number, required: true },
           path: { type: String, required: true },
           title: { type: String, required: true },
           authors: { type: String, required: true },
