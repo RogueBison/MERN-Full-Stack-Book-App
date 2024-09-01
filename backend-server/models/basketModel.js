@@ -13,7 +13,7 @@ const basketSchema = new Schema(
           authors: { type: String, required: true },
           publication: { type: String, required: true },
           description: { type: String, required: true },
-          price: { Type: Number, required: true },
+          price: { type: Number, required: true },
         },
         quantity: { type: Number, default: 1 },
       },
