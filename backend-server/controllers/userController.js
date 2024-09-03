@@ -38,9 +38,8 @@ const loginUserAccount = async (req, res) => {
   }
 };
 
-/// Basket functions
+/// BASKET FUNCTIONS ///
 
-//
 const getBasketAmount = async (req, res) => {
   const { userId } = req;
 
@@ -52,78 +51,175 @@ const getBasketAmount = async (req, res) => {
   }
 };
 
-//
 const getBasket = async (req, res) => {
   const { userId } = req;
 
   try {
-    const cart = await Basket.findOne({ user: userId });
+    const userBasket = await Basket.findOne({ user: userId });
 
-    if (!cart) {
+    if (!userBasket) {
       res.status(404);
       throw new Error("Basket not found");
     } else {
-      res.status(200).json(cart);
+      res.status(200).json(userBasket);
     }
   } catch (error) {
     res.status(400).json({ error: error.message });
   }
 };
 
-//
 const addOrUpdateBasket = async (req, res) => {
+  const { userId } = req.body.token;
+
+  const { _id, path, title, authors, price, publication, description } =
+    req.body;
+
+  /* const { id } = req.body.book; */
+
+  try {
+    const newBook = {
+      _id,
+      path,
+      title,
+      authors,
+      price,
+      publication,
+      description,
+    };
+
+    const userBasket = await Basket.findOne({ user: userId });
+
+    if (userBasket) {
+      const bookExists = userBasket.basketBooks.findIndex(
+        (b) => b.book.id == newBook._id
+      );
+
+      if (bookExists !== -1) {
+        await Basket.findOneAndUpdate(
+          { user: userId, "basketBooks.book.id": newBook._id },
+          { $inc: { "basketBooks.$.quantity": 1 } },
+          { new: true }
+        );
+
+        const updatedBook = await Basket.findOne({ user: userId });
+
+        res.status(200).json({
+          message: "Updated Basket",
+          amount: updatedBook?.basketBooks?.length,
+        });
+      } else {
+        const addNewBook = await Basket.findOneAndUpdate(
+          { user: userId },
+          { $push: { basketBooks: { book: { ...newBook } } } },
+          { new: true }
+        );
+
+        res.status(200).json({
+          message: "Added to Basket",
+          total: addNewBook?.basketBooks?.length,
+        });
+      }
+    } else {
+      const book = await Basket.create({
+        user: userId,
+        basketBooks: [{ book: { ...newBook } }],
+      });
+      res.status(200).json({
+        message: "Added to Basket",
+        total: book?.basketBooks?.length,
+      });
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const removeBasket = async (req, res) => {
   const { userId } = req;
-  const { id } = req.body.book;
-  const cart = await Basket.findOne({ user: userId });
+  const { id } = req.body;
 
-  if (cart) {
-    const bookExists = cart.basketBooks.findIndex((b) => b.product.id == id);
+  try {
+    const userBasket = await Basket.findOne({
+      user: userId,
+      "basketBooks.book.id": id,
+    });
 
-    if (bookExists !== -1) {
+    if (userBasket) {
+      const response = await Basket.findOneAndUpdate(
+        {
+          user: userId,
+          "basketBooks.book.id": id,
+        },
+        { $pull: { basketBooks: { "book.id": id } } },
+        { new: true }
+      );
+
+      res.status(200).json({
+        message: "Removed book from basket",
+        total: response?.basketBooks?.length,
+      });
+    } else {
+      res.status(404);
+      throw new Error("Book not found");
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
+
+const increaseQty = async (req, res) => {
+  const { userId } = req;
+  const { bookId } = req.body;
+
+  try {
+    const userBasket = await Basket.findOne({
+      user: userId,
+      "basketBooks.book.id": bookId,
+    });
+
+    if (userBasket) {
       await Basket.findOneAndUpdate(
-        { user: userId, "basketBooks.book.id": id },
+        { "basketBooks.book.id": bookId },
         { $inc: { "basketBooks.$.quantity": 1 } },
         { new: true }
       );
 
-      const updatedBook = await Basket.findOne({ user: userId });
-
-      res.status(200).json({
-        message: "Updated Basket",
-        amount: updatedBook?.basketBooks?.length,
-      });
+      res.status(200).json({ message: "Increased quantity +1" });
     } else {
-      const addNewBook = await Basket.findOneAndUpdate(
-        { user: userId },
-        { $push: { basketBooks: { book: { ...req.body.book } } } },
-        { new: true }
-      );
-
-      res.status(200).json({
-        message: "Added to Basket",
-        total: addNewBook?.basketBooks?.length,
-      });
+      res.status(404);
+      throw new Error("Book not found");
     }
-  } else {
-    const book = await Basket.create({
-      user: userId,
-      basketBooks: [{ book: { ...req.body.book } }],
-    });
-    res.status(200).json({
-      message: "Added to Basket",
-      total: book?.basketBooks?.length,
-    });
+  } catch (error) {
+    res.status(400).json({ error: error.message });
   }
 };
 
-//
-const removeBasket = async (req, res) => {};
+const decreaseQty = async (req, res) => {
+  const { userId } = req;
+  const { bookId } = req.body;
 
-//
-const increaseQty = async (req, res) => {};
+  try {
+    const userBasket = await Basket.findOne({
+      user: userId,
+      "basketBooks.book.id": bookId,
+    });
 
-//
-const decreaseQty = async (req, res) => {};
+    if (userBasket) {
+      await Basket.findOneAndUpdate(
+        { "basketBooks.book.id": productId },
+        { $inc: { "basketBooks.$.quantity": -1 } },
+        { new: true }
+      );
+
+      res.status(200).json({ message: "Decreased quantity -1" });
+    } else {
+      res.status(404);
+      throw new Error("Book not found");
+    }
+  } catch (error) {
+    res.status(400).json({ error: error.message });
+  }
+};
 
 module.exports = {
   createUserAccount,

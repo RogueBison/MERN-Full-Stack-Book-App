@@ -21,7 +21,8 @@ userRouter.post("/signup", createUserAccount);
 // Login to account
 userRouter.post("/login", loginUserAccount);
 
-// Basket Routes
+/// BASKET ROUTES ///
+
 userRouter.get("/get-basket-number", requireAuth, getBasketAmount);
 userRouter.get("/get-basket", requireAuth, getBasket);
 userRouter.post("/create-basket", requireAuth, addOrUpdateBasket);
