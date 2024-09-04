@@ -41,7 +41,7 @@ const loginUserAccount = async (req, res) => {
 /// BASKET FUNCTIONS ///
 
 const getBasketAmount = async (req, res) => {
-  const { userId } = req;
+  const userId = req.user;
 
   try {
     const user = await Basket.findOne({ user: userId });
@@ -52,7 +52,7 @@ const getBasketAmount = async (req, res) => {
 };
 
 const getBasket = async (req, res) => {
-  const { userId } = req;
+  const userId = req.user;
 
   try {
     const userBasket = await Basket.findOne({ user: userId });
@@ -69,12 +69,10 @@ const getBasket = async (req, res) => {
 };
 
 const addOrUpdateBasket = async (req, res) => {
-  const { userId } = req.body.token;
+  const userId = req.user;
 
   const { _id, path, title, authors, price, publication, description } =
     req.body;
-
-  /* const { id } = req.body.book; */
 
   try {
     const newBook = {
@@ -135,22 +133,22 @@ const addOrUpdateBasket = async (req, res) => {
 };
 
 const removeBasket = async (req, res) => {
-  const { userId } = req;
-  const { id } = req.body;
+  const userId = req.user;
+  const bookId = req.body._id;
 
   try {
     const userBasket = await Basket.findOne({
       user: userId,
-      "basketBooks.book.id": id,
+      "basketBooks.book.id": bookId,
     });
 
     if (userBasket) {
       const response = await Basket.findOneAndUpdate(
         {
           user: userId,
-          "basketBooks.book.id": id,
+          "basketBooks.book.id": bookId,
         },
-        { $pull: { basketBooks: { "book.id": id } } },
+        { $pull: { basketBooks: { "book.id": bookId } } },
         { new: true }
       );
 
@@ -168,8 +166,8 @@ const removeBasket = async (req, res) => {
 };
 
 const increaseQty = async (req, res) => {
-  const { userId } = req;
-  const { bookId } = req.body;
+  const userId = req.user;
+  const { bookId } = req.body._id;
 
   try {
     const userBasket = await Basket.findOne({
@@ -195,8 +193,8 @@ const increaseQty = async (req, res) => {
 };
 
 const decreaseQty = async (req, res) => {
-  const { userId } = req;
-  const { bookId } = req.body;
+  const userId = req.user;
+  const { bookId } = req.body._id;
 
   try {
     const userBasket = await Basket.findOne({
