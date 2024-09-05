@@ -1,15 +1,17 @@
+const url = import.meta.env.VITE_SERVER_URL;
+
 import { Link } from "react-router-dom";
-/* import { useEffect, useState } from "react"; */
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 import { PiBasketFill } from "react-icons/pi";
 import { IconContext } from "react-icons";
 import StarRating from "../../components/starRating";
 import { useBooksContext } from "../../hooks/useBooksContext";
-const url = import.meta.env.VITE_SERVER_URL;
+import { useAuthContext } from "../../hooks/useAuthContext";
 
 export default function All() {
-  /* const [books, setBooks] = useState(null); */
   const { books, dispatch } = useBooksContext();
+  const { user } = useAuthContext();
+  const [error, setError] = useState(null);
 
   useEffect(() => {
     const fetchBooks = async () => {
@@ -20,7 +22,6 @@ export default function All() {
         }
         const json = await response.json();
         dispatch({ type: "GET_BOOKS", payload: json });
-        /* setBooks(json); */
       } catch (error) {
         console.error(error.message);
       }
@@ -28,6 +29,45 @@ export default function All() {
 
     fetchBooks();
   }, [dispatch]);
+
+  const handleClick = async (book) => {
+    if (!user) {
+      setError("You must be signed in to do that");
+      return;
+    }
+
+    const bookData = {
+      _id: book._id,
+      path: book.path,
+      title: book.title,
+      authors: book.authors,
+      price: book.price,
+      publication: book.publication,
+      description: book.description,
+    };
+
+    try {
+      const response = await fetch(`${url}/user/create-basket`, {
+        method: "POST",
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify(bookData),
+      });
+
+      const json = await response.json();
+
+      if (!response.ok) {
+        setError(json.error);
+      } else {
+        setError(null);
+        dispatch({ type: "SET_BASKET", payload: json });
+      }
+    } catch (error) {
+      console.error(error.message);
+    }
+  };
 
   return (
     <>
@@ -67,13 +107,20 @@ export default function All() {
                   </p>
                 </div>
                 <IconContext.Provider value={{ className: "text-2xl" }}>
-                  <button className="flex gap-4 items-center uppercase rounded-md px-8 py-2 mt-4 text-base font-semibold bg-emerald-700 text-neutral-100 hover:shadow-lg hover:bg-emerald-800">
+                  <button
+                    onClick={(e) => {
+                      e.preventDefault();
+                      handleClick(book);
+                    }}
+                    className="flex gap-4 items-center uppercase rounded-md px-8 py-2 mt-4 text-base font-semibold bg-emerald-700 text-neutral-100 hover:shadow-lg hover:bg-emerald-800"
+                  >
                     Add to Basket <PiBasketFill />
                   </button>
                 </IconContext.Provider>
               </div>
             </Link>
           ))}
+        {error && <div>{error}</div>}
       </div>
     </>
   );
